@@ -36,7 +36,10 @@ function addMailPilotButton(anchorEl: HTMLElement) {
   btn.appendChild(img);
   mailpilotTd.appendChild(btn);
 
-  // Insert before the Aa cell
+  btn.addEventListener('click', () => {
+    chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
+  });
+
   const tr = td.parentElement;
   if (tr && tr.tagName === 'TR') {
     tr.insertBefore(mailpilotTd, td);

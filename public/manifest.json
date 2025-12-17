@@ -17,7 +17,23 @@
     "service_worker": "background.js",
     "type": "module"
   },
-  "permissions": ["activeTab"],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "permissions": [
+    "activeTab",
+    "sidePanel",
+    "tabs",
+    "storage"
+  ],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+B",
+        "mac": "Command+B"
+      }
+    }
+  },
   "host_permissions": ["https://mail.google.com/*"],
   "content_scripts": [
     {
