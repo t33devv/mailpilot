@@ -16,7 +16,6 @@ export function SidePanelApp() {
   const [_addSignature, _setAddSignature] = useState(true);
   const [email, setEmail] = useState<EmailData | null>(null);
   const [translate, setTranslate] = useState(false);
-  const [fromLanguage, setFromLanguage] = useState('English');
   const [toLanguage, setToLanguage] = useState('Spanish');
   const [rewritten, setRewritten] = useState<RewrittenEmail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -333,7 +332,7 @@ export function SidePanelApp() {
 
         console.log('Rewriting with tone:', tone);
         if (translate) {
-          console.log('Translation:', fromLanguage, '→', toLanguage);
+          console.log('Translation to:', toLanguage);
         }
 
         // Send rewrite request with fresh email data
@@ -341,7 +340,7 @@ export function SidePanelApp() {
           type: 'REWRITE_EMAIL',
           email: freshEmail,
           tone,
-          translate: translate ? { from: fromLanguage, to: toLanguage } : undefined,
+          translate: translate ? { to: toLanguage } : undefined,
         });
       });
     });
@@ -437,52 +436,26 @@ export function SidePanelApp() {
           </div>
         </div>
 
-        {/* Translation language selectors - shown when translate is checked */}
+        {/* Translation language selector - shown when translate is checked */}
         {translate && (
-          <div className="flex items-center gap-3 mb-6 flex-wrap">
-            <div className="flex-1 min-w-[140px]">
-              <label className="block text-xs text-[#666] mb-1">From language</label>
-              <select
-                className="w-full px-3 py-2.5 border border-[#d0d0d0] rounded-md text-sm bg-white text-[#1a1a1a] cursor-pointer appearance-none hover:border-[#a0a0a0] focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/10 pr-9"
-                value={fromLanguage}
-                onChange={(e) => setFromLanguage(e.target.value)}
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5l3 3 3-3' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'right 12px center',
-                }}
-              >
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex items-center text-[#666] text-sm mt-6">
-              →
-            </div>
-
-            <div className="flex-1 min-w-[140px]">
-              <label className="block text-xs text-[#666] mb-1">To language</label>
-              <select
-                className="w-full px-3 py-2.5 border border-[#d0d0d0] rounded-md text-sm bg-white text-[#1a1a1a] cursor-pointer appearance-none hover:border-[#a0a0a0] focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/10 pr-9"
-                value={toLanguage}
-                onChange={(e) => setToLanguage(e.target.value)}
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5l3 3 3-3' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'right 12px center',
-                }}
-              >
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="mb-6">
+            <label className="block text-xs text-[#666] mb-1">Translate to</label>
+            <select
+              className="w-full px-3 py-2.5 border border-[#d0d0d0] rounded-md text-sm bg-white text-[#1a1a1a] cursor-pointer appearance-none hover:border-[#a0a0a0] focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/10 pr-9"
+              value={toLanguage}
+              onChange={(e) => setToLanguage(e.target.value)}
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5l3 3 3-3' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'right 12px center',
+              }}
+            >
+              {languages.map((lang) => (
+                <option key={lang} value={lang}>
+                  {lang}
+                </option>
+              ))}
+            </select>
           </div>
         )}
 
