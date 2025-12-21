@@ -288,15 +288,15 @@ export function SidePanelApp() {
     setRewritten(null);
     setIsCooldown(false);
 
-    // Get fresh email data from Gmail
-    chrome.tabs.query({ url: 'https://mail.google.com/*' }, (tabs) => {
-      if (tabs.length === 0) {
-        setError('Gmail tab not found');
+    chrome.storage.local.get('mailpilotActiveTabId', (res) => {
+      const tabId = res.mailpilotActiveTabId as number | undefined;
+      if (!tabId) {
+        setError('No active Gmail tab found for this panel.');
         setIsLoading(false);
         return;
       }
 
-      chrome.tabs.sendMessage(tabs[0].id!, { type: 'GET_EMAIL_DATA' }, (response) => {
+      chrome.tabs.sendMessage(tabId, { type: 'GET_EMAIL_DATA' }, (response) => {
         if (chrome.runtime.lastError) {
           setError('Could not retrieve email data');
           setIsLoading(false);
@@ -312,6 +312,19 @@ export function SidePanelApp() {
 
         setEmail(freshEmail);
         const charCount = freshEmail.bodyText ? freshEmail.bodyText.trim().length : 0;
+
+        if (!freshEmail.subject?.trim()) {
+          setError('Add a subject to your email before using MailPilot.');
+          setIsLoading(false);
+          return;
+        }
+
+        if (!freshEmail.bodyText?.trim()) {
+          setError('Your email body is empty. Write your email first, then click Rewrite.');
+          setIsLoading(false);
+          return;
+        }
+
         if (charCount < 30) {
           setError('Email is too short. Please write at least 30 characters.');
           setIsLoading(false);
@@ -328,9 +341,7 @@ export function SidePanelApp() {
           type: 'REWRITE_EMAIL',
           email: freshEmail,
           tone,
-          translate: translate
-            ? { from: fromLanguage, to: toLanguage }
-            : undefined,
+          translate: translate ? { from: fromLanguage, to: toLanguage } : undefined,
         });
       });
     });

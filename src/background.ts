@@ -43,6 +43,9 @@ chrome.runtime.onMessage.addListener(async (message, sender, _sendResponse) => {
     );
 
     if (sender.tab?.id !== undefined) {
+      // remember which tab this panel belongs to
+      chrome.storage.local.set({ mailpilotActiveTabId: sender.tab.id });
+
       chrome.sidePanel.open({ tabId: sender.tab.id });
     } else if (sender.tab?.windowId !== undefined) {
       chrome.sidePanel.open({ windowId: sender.tab.windowId });
