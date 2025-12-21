@@ -60,7 +60,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, _sendResponse) => {
     
     try {
       // IMPORTANT: Replace with your Render URL if deployed, or keep localhost for local dev
-      const backendUrl = 'http://localhost:3000/api/rewrite'; // Change to your Render URL when deployed
+      const backendUrl = 'https://mailpilot-backend-21rf.onrender.com/api/rewrite'; // Change to your Render URL when deployed
       
       console.log('[MailPilot bg] Calling backend:', backendUrl);
       
