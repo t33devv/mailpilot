@@ -408,20 +408,20 @@ export function SidePanelApp() {
         <div className="flex justify-end">
           <button className="" onClick={toggleLightMode}>
             {isLightMode ? (
-              <img src="icons/moon.svg" alt="Dark Mode" className="mt-[2.5rem] w-9 h-9 hover:opacity-80" />
+              <img src="icons/moon.svg" alt="Dark Mode" className="mt-[2rem] w-9 h-9 hover:opacity-80" />
             ) : (
-              <img src="icons/sun.svg" alt="Light Mode" className="mt-[2.5rem] w-9 h-9 hover:opacity-80" />
+              <img src="icons/sun.svg" alt="Light Mode" className="mt-[2rem] w-9 h-9 hover:opacity-80" />
             )}
           </button>
         </div>
         
 
-        <h1 className="text-xl font-semibold mt-[-1.7rem] mb-6">Select your tone</h1>
+        <h1 className="text-xl font-semibold mt-[-1.2rem] mb-6">Select your tone</h1>
 
         <div className="flex items-center gap-3 mb-6 flex-wrap">
           <div className="flex-1 min-w-[120px]">
             <select
-              className="w-full px-3 py-2.5 border border-[#d0d0d0] rounded-md text-sm bg-white text-[#1a1a1a] cursor-pointer appearance-none hover:border-[#a0a0a0] focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/10 pr-9"
+              className={`w-full px-3 py-2.5 border border-[#d0d0d0] rounded-md text-sm ${isLightMode ? 'bg-white text-[#1a1a1a]' : 'bg-[#1a1a1a] text-white'}  cursor-pointer appearance-none hover:border-[#a0a0a0] focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/10 pr-9`}
               value={tone}
               onChange={(e) => setTone(e.target.value)}
               style={{
@@ -456,7 +456,7 @@ export function SidePanelApp() {
           <div className="mb-6">
             <label className="block text-xs text-[#666] mb-1">Translate to</label>
             <select
-              className="w-full px-3 py-2.5 border border-[#d0d0d0] rounded-md text-sm bg-white text-[#1a1a1a] cursor-pointer appearance-none hover:border-[#a0a0a0] focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/10 pr-9"
+              className={`w-full px-3 py-2.5 border border-[#d0d0d0] rounded-md text-sm ${isLightMode ? 'bg-white text-[#1a1a1a]' : 'bg-[#1a1a1a] text-white'} cursor-pointer appearance-none hover:border-[#a0a0a0] focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/10 pr-9`}
               value={toLanguage}
               onChange={(e) => setToLanguage(e.target.value)}
               style={{
@@ -477,7 +477,7 @@ export function SidePanelApp() {
         {/* Rewrite Button - moved here */}
         <div className="mb-6">
           <button
-            className="relative bg-[#d3272b] text-white border-none rounded-md px-5 py-2.5 text-sm font-medium cursor-pointer flex items-center gap-2 hover:bg-[#b01f23] transition-colors flex-shrink-0 disabled:bg-[#c0c0c0] disabled:cursor-not-allowed disabled:opacity-60 overflow-hidden"
+            className={`relative bg-[#d3272b] text-white border-none rounded-md px-5 py-2.5 text-sm font-medium cursor-pointer flex items-center gap-2 hover:bg-[#b01f23] transition-colors flex-shrink-0 ${isLightMode ? 'disabled:bg-[#c0c0c0]' : 'disabled:bg-[#404040]'} disabled:cursor-not-allowed disabled:opacity-60 overflow-hidden`}
             onClick={handleRewrite}
             disabled={isButtonDisabled}
             style={{
@@ -560,8 +560,8 @@ export function SidePanelApp() {
             <h2 className="text-lg font-semibold mb-4">Rewritten Email</h2>
             
             <div className="mb-4">
-              <label className="block text-xs font-medium text-[#666] mb-1">Subject</label>
-              <div className="px-3 py-2 border border-[#d0d0d0] rounded-md text-sm text-[#1a1a1a]">
+              <label className="block text-xs font-medium mb-1">Subject</label>
+              <div className="px-3 py-2 border border-[#d0d0d0] rounded-md text-sm">
                 {typedSubject}
                 {isTyping && typedSubject.length < rewritten.subject.length && (
                   <span className="inline-block w-0.5 h-4 bg-[#1a1a1a] ml-1 animate-pulse" />
@@ -570,8 +570,8 @@ export function SidePanelApp() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-xs font-medium text-[#666] mb-1">Body</label>
-              <div className="px-3 py-2 border border-[#d0d0d0] rounded-md text-sm text-[#1a1a1a] whitespace-pre-wrap">
+              <label className="block text-xs font-medium mb-1">Body</label>
+              <div className="px-3 py-2 border border-[#d0d0d0] rounded-md text-sm whitespace-pre-wrap">
                 {typedBody}
                 {isTyping && typedBody.length < rewritten.body.length && (
                   <span className="inline-block w-0.5 h-4 bg-[#1a1a1a] ml-1 animate-pulse" />
