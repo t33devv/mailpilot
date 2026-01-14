@@ -282,6 +282,18 @@ export function SidePanelApp() {
       chrome.storage.onChanged.removeListener(handleStorageChange);
     };
   }, []);
+  
+  useEffect(() => {
+    chrome.storage.local.get('mailpilotTheme', (result) => {
+      if (result.mailpilotTheme !== undefined) {
+        setIsLightMode(result.mailpilotTheme as boolean);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    chrome.storage.local.set({ mailpilotTheme: isLightMode });
+  }, [isLightMode]);
 
   const toggleLightMode = () => {
     setIsLightMode((prev) => !prev);
@@ -416,7 +428,7 @@ export function SidePanelApp() {
         </div>
         
 
-        <h1 className="text-xl font-semibold mt-[-1.2rem] mb-6">Select your tone</h1>
+        <h1 className="text-xl font-semibold mt-[-2rem] mb-6">Select your tone</h1>
 
         <div className="flex items-center gap-3 mb-6 flex-wrap">
           <div className="flex-1 min-w-[120px]">
