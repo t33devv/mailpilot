@@ -561,7 +561,7 @@ export function SidePanelApp() {
             
             <div className="mb-4">
               <label className="block text-xs font-medium text-[#666] mb-1">Subject</label>
-              <div className="px-3 py-2 bg-white border border-[#d0d0d0] rounded-md text-sm text-[#1a1a1a]">
+              <div className="px-3 py-2 border border-[#d0d0d0] rounded-md text-sm text-[#1a1a1a]">
                 {typedSubject}
                 {isTyping && typedSubject.length < rewritten.subject.length && (
                   <span className="inline-block w-0.5 h-4 bg-[#1a1a1a] ml-1 animate-pulse" />
@@ -571,7 +571,7 @@ export function SidePanelApp() {
 
             <div className="mb-4">
               <label className="block text-xs font-medium text-[#666] mb-1">Body</label>
-              <div className="px-3 py-2 bg-white border border-[#d0d0d0] rounded-md text-sm text-[#1a1a1a] whitespace-pre-wrap">
+              <div className="px-3 py-2 border border-[#d0d0d0] rounded-md text-sm text-[#1a1a1a] whitespace-pre-wrap">
                 {typedBody}
                 {isTyping && typedBody.length < rewritten.body.length && (
                   <span className="inline-block w-0.5 h-4 bg-[#1a1a1a] ml-1 animate-pulse" />
