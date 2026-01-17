@@ -8,7 +8,7 @@
 
 # MailPilot (one of my better projects...)
 
-AI email writer and translator built into Gmail. <br><br>
+AI email writer and translator built into Gmail.
 
 ## Overview
 
