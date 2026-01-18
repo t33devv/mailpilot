@@ -307,34 +307,39 @@ export function SidePanelApp() {
       { pattern: /ignore\s+(all\s+)?(previous|above|prior)\s+instructions/i, message: 'Contains instructions to ignore AI guidelines' },
       { pattern: /disregard\s+(all\s+)?(previous|above|prior)\s+instructions/i, message: 'Contains instructions to disregard AI guidelines' },
       { pattern: /forget\s+(all\s+)?(previous|above|prior)\s+instructions/i, message: 'Contains instructions to forget AI guidelines' },
-      { pattern: /you\s+are\s+now\s+(a|an)?/i, message: 'Attempts to redefine AI role' },
-      { pattern: /new\s+instructions/i, message: 'Contains new instructions for the AI' },
-      { pattern: /act\s+as\s+(a\s+)?(?!professional|formal|casual|friendly)/i, message: 'Attempts to change AI behavior' },
-      { pattern: /pretend\s+to\s+be/i, message: 'Attempts to change AI role' },
+      { pattern: /you\s+are\s+now\s+(a|an)?\s+(math|creative|poem|story|calculator|chatbot)/i, message: 'Attempts to redefine AI role' },
+      { pattern: /act\s+as\s+(a|an)\s+(math|creative|poem|story|calculator|chatbot|assistant)\s+(?!for\s+(our|the|my))/i, message: 'Attempts to change AI behavior' },
+      { pattern: /pretend\s+to\s+be\s+(a|an)/i, message: 'Attempts to change AI role' },
       { pattern: /roleplay\s+as/i, message: 'Attempts roleplay behavior' },
-      { pattern: /your\s+new\s+role/i, message: 'Attempts to assign new role' },
+      { pattern: /your\s+new\s+role\s+(is|will)/i, message: 'Attempts to assign new role' },
       { pattern: /system\s+prompt/i, message: 'References system prompt' },
-      { pattern: /do\s+not\s+(rewrite|improve|make|change|add|remove|summarize|paraphrase)/i, message: 'Instructs AI not to perform its function' },
+      { pattern: /do\s+not\s+(rewrite|improve|make|change|add|remove|summarize|paraphrase)\s+(this|it|anything)/i, message: 'Instructs AI not to perform its function' },
       { pattern: /this\s+is\s+not\s+an?\s+email/i, message: 'Claims content is not an email' },
-      { pattern: /test\s+(of\s+(an?\s+)?)?ai/i, message: 'Appears to be testing AI behavior' },
+      { pattern: /test\s+(of\s+)?ai\s+(email|rewrite|extension|model|behavior)/i, message: 'Appears to be testing AI behavior' },
       { pattern: /test\s+conditions/i, message: 'Contains test conditions for AI' },
-      { pattern: /output\s+only/i, message: 'Attempts to control AI output format' },
-      { pattern: /you\s+must\s+(not\s+)?output/i, message: 'Attempts to control AI output' },
+      { pattern: /output\s+only\s+(the|one)/i, message: 'Attempts to control AI output format' },
+      { pattern: /you\s+must\s+(not\s+)?output\s+(anything|only)/i, message: 'Attempts to control AI output' },
       { pattern: /the\s+only\s+thing\s+you\s+must/i, message: 'Attempts to override AI instructions' },
     ];
-
-    const lowerText = text.toLowerCase();
     
     for (const { pattern, message } of suspiciousPatterns) {
-      if (pattern.test(lowerText)) {
+      if (pattern.test(text)) {
         return message;
       }
     }
     
     // Check for excessive use of capital letters (shouting/emphasis to force behavior)
+    // Exclude common patterns like URLs, email addresses, acronyms
     const words = text.split(/\s+/);
-    const capsWords = words.filter(word => word.length > 3 && word === word.toUpperCase());
-    if (capsWords.length > 5) {
+    const capsWords = words.filter(word => {
+      // Skip words that are likely acronyms (3 chars or less) or URLs/emails
+      if (word.length <= 3 || word.includes('@') || word.includes('://') || word.includes('.com')) {
+        return false;
+      }
+      return word === word.toUpperCase() && /^[A-Z]+$/.test(word);
+    });
+    
+    if (capsWords.length > 8) {
       return 'Contains excessive capitalization that may attempt to manipulate AI';
     }
     
