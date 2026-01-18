@@ -18,7 +18,9 @@ MailPilot is a Chrome extension that helps you write better emails faster. It li
 
 -   ✨ **AI-Powered Rewriting** - Rewrites any Gmail draft or opened email directly in a built-in side panel
 -   🎯 **Multiple Tones** - Choose from options: Formal, Casual, Professional, or Friendly tones
--   🌍 **Translation Support** - Translate emails from and into 15+ language choices
+-   🌍 **Enhanced Translation Support** - Translate emails from and into 30+ languages with auto-detection or manual language selection
+-   🌐 **Multi-language Interface** - Interface available in 16 languages: English, Spanish, French, German, Chinese, Japanese, Portuguese, Italian, Russian, Arabic, Hindi, Tamil, Telugu, Malayalam, Kannada, and Bengali
+-   🛡️ **Security Protection** - Built-in detection of suspicious content patterns that may attempt to manipulate AI behavior
 -   ⚡ **Fast & Easy** - One-click rewrite and apply functionality
 -   📧 **Gmail Integration** - Seamlessly integrated into Gmail's (and SOON a lot more email websites') compose window
 
@@ -32,13 +34,53 @@ Download MailPilot from the Chrome Web Store:
 
 1. Click the MailPilot icon that appears next to Gmail's formatting toolbar
 2. MailPilot captures your current subject and body, then generates a polished rewrite
-3. One more click applies the new subject and body back into your Gmail compose window
-4. Customize the tone and translation to whatever you like
+3. Select your desired tone (Formal, Casual, Professional, or Friendly)
+4. (Optional) Enable translation and choose your source and target languages from 30+ options
+5. Click "Rewrite" and watch as AI transforms your email
+6. One more click applies the new subject and body back into your Gmail compose window
+
+### Translation Feature
+
+The enhanced translation feature now supports:
+- **30+ languages** including English, Spanish, French, German, Chinese, Japanese, Arabic, and many more
+- **Auto-detect source language** - Let AI automatically detect the language of your email
+- **Manual language selection** - Choose specific source and target languages for precise control
+- **Bidirectional translation** - Write in any language and translate to any other language
+
+### Interface Language
+
+MailPilot interface is now available in 16 languages:
+- **English** 🇬🇧
+- **Spanish (Español)** 🇪🇸
+- **French (Français)** 🇫🇷
+- **German (Deutsch)** 🇩🇪
+- **Chinese (中文)** 🇨🇳
+- **Japanese (日本語)** 🇯🇵
+- **Portuguese (Português)** 🇵🇹
+- **Italian (Italiano)** 🇮🇹
+- **Russian (Русский)** 🇷🇺
+- **Arabic (العربية)** 🇸🇦
+- **Hindi (हिन्दी)** 🇮🇳
+- **Tamil (தமிழ்)** 🇮🇳
+- **Telugu (తెలుగు)** 🇮🇳
+- **Malayalam (മലയാളം)** 🇮🇳
+- **Kannada (ಕನ್ನಡ)** 🇮🇳
+- **Bengali (বাংলা)** 🇧🇩
+
+Simply select your preferred language from the dropdown in the top-right corner of the side panel. Your preference will be saved automatically.
+
+### Security Features
+
+MailPilot includes built-in protection against prompt injection and jailbreak attempts:
+- Automatically detects suspicious patterns in email content
+- Warns users when content may attempt to manipulate AI behavior
+- Ensures AI maintains its email rewriting purpose regardless of email content
 
 ## Perfect For
 
 -   Students and professionals who need clear, respectful email copy fast
 -   Multilingual users who want help drafting emails in another language
+-   International teams communicating across language barriers
 -   Anyone who writes a lot of email and wants a faster way to "sound better" without overthinking every sentence
 
 ## Links

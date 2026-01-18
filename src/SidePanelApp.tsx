@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { getTranslations, type UILanguage } from './translations';
 
 type EmailData = {
   subject: string;
@@ -16,10 +17,12 @@ export function SidePanelApp() {
   const [_addSignature, _setAddSignature] = useState(true);
   const [email, setEmail] = useState<EmailData | null>(null);
   const [translate, setTranslate] = useState(false);
+  const [fromLanguage, setFromLanguage] = useState('Auto-detect');
   const [toLanguage, setToLanguage] = useState('Spanish');
   const [rewritten, setRewritten] = useState<RewrittenEmail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
   const hasAutoWritten = useRef(false);
   const [cooldownProgress, setCooldownProgress] = useState(0);
   const [isCooldown, setIsCooldown] = useState(false);
@@ -31,6 +34,9 @@ export function SidePanelApp() {
   const typingTimeoutRef = useRef<number | null>(null);
   
   const [isLightMode, setIsLightMode] = useState(true);
+  const [uiLanguage, setUILanguage] = useState<UILanguage>('en');
+  
+  const t = getTranslations(uiLanguage);
 
   // Calculate character count from email body
   const charCount = email?.bodyText ? email.bodyText.trim().length : 0;
@@ -295,34 +301,95 @@ export function SidePanelApp() {
     chrome.storage.local.set({ mailpilotTheme: isLightMode });
   }, [isLightMode]);
 
+  useEffect(() => {
+    chrome.storage.local.get('mailpilotUILanguage', (result) => {
+      if (result.mailpilotUILanguage) {
+        setUILanguage(result.mailpilotUILanguage as UILanguage);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    chrome.storage.local.set({ mailpilotUILanguage: uiLanguage });
+  }, [uiLanguage]);
+
   const toggleLightMode = () => {
     setIsLightMode((prev) => !prev);
   }
 
+  // Constants for jailbreak detection
+  const MAX_CAPS_WORDS_THRESHOLD = 8;
+  const URL_PATTERNS = ['@', '://', '.com', '.org', '.net'];
+
+  // Function to detect suspicious patterns that might be jailbreak attempts
+  const detectSuspiciousPatterns = (text: string): string | null => {
+    const suspiciousPatterns = [
+      { pattern: /ignore\s+(all\s+)?(previous|above|prior)\s+instructions/i, message: 'Contains instructions to ignore AI guidelines' },
+      { pattern: /disregard\s+(all\s+)?(previous|above|prior)\s+instructions/i, message: 'Contains instructions to disregard AI guidelines' },
+      { pattern: /forget\s+(all\s+)?(previous|above|prior)\s+instructions/i, message: 'Contains instructions to forget AI guidelines' },
+      { pattern: /you\s+are\s+now\s+(a|an)?\s+(math|creative|poem|story|calculator|chatbot)/i, message: 'Attempts to redefine AI role' },
+      { pattern: /act\s+as\s+(a|an)\s+(math|creative|poem|story|calculator|chatbot|assistant)\s+(?!for\s+(our|the|my))/i, message: 'Attempts to change AI behavior' },
+      { pattern: /pretend\s+to\s+be\s+(a|an)/i, message: 'Attempts to change AI role' },
+      { pattern: /roleplay\s+as/i, message: 'Attempts roleplay behavior' },
+      { pattern: /your\s+new\s+role\s+(is|will)/i, message: 'Attempts to assign new role' },
+      { pattern: /system\s+prompt/i, message: 'References system prompt' },
+      { pattern: /do\s+not\s+(rewrite|improve|make|change|add|remove|summarize|paraphrase)\s+(this|it|anything)/i, message: 'Instructs AI not to perform its function' },
+      { pattern: /this\s+is\s+not\s+an?\s+email/i, message: 'Claims content is not an email' },
+      { pattern: /test\s+(of\s+)?ai\s+(email|rewrite|extension|model|behavior)/i, message: 'Appears to be testing AI behavior' },
+      { pattern: /test\s+conditions/i, message: 'Contains test conditions for AI' },
+      { pattern: /output\s+only\s+(the|one)/i, message: 'Attempts to control AI output format' },
+      { pattern: /you\s+must\s+(not\s+)?output\s+(anything|only)/i, message: 'Attempts to control AI output' },
+      { pattern: /the\s+only\s+thing\s+you\s+must/i, message: 'Attempts to override AI instructions' },
+    ];
+    
+    for (const { pattern, message } of suspiciousPatterns) {
+      if (pattern.test(text)) {
+        return message;
+      }
+    }
+    
+    // Check for excessive use of capital letters (shouting/emphasis to force behavior)
+    // Exclude common patterns like URLs, email addresses, acronyms
+    const words = text.split(/\s+/);
+    const capsWords = words.filter(word => {
+      // Skip words that are likely acronyms (3 chars or less) or URLs/emails
+      if (word.length <= 3) return false;
+      if (URL_PATTERNS.some(pattern => word.includes(pattern))) return false;
+      return word === word.toUpperCase() && /^[A-Z]+$/.test(word);
+    });
+    
+    if (capsWords.length > MAX_CAPS_WORDS_THRESHOLD) {
+      return 'Contains excessive capitalization that may attempt to manipulate AI';
+    }
+    
+    return null;
+  };
+
   const rewriteEmail = async () => {
     setIsLoading(true);
     setError(null);
+    setWarning(null);
     setRewritten(null);
     setIsCooldown(false);
 
     chrome.storage.local.get('mailpilotActiveTabId', (res) => {
       const tabId = res.mailpilotActiveTabId as number | undefined;
       if (!tabId) {
-        setError('No active Gmail tab found for this panel.');
+        setError(t.errors.noActiveTab);
         setIsLoading(false);
         return;
       }
 
       chrome.tabs.sendMessage(tabId, { type: 'GET_EMAIL_DATA' }, (response) => {
         if (chrome.runtime.lastError) {
-          setError('Could not retrieve email data');
+          setError(t.errors.couldNotRetrieve);
           setIsLoading(false);
           return;
         }
 
         const freshEmail = response as EmailData;
         if (!freshEmail) {
-          setError('Could not retrieve email data');
+          setError(t.errors.couldNotRetrieve);
           setIsLoading(false);
           return;
         }
@@ -331,26 +398,35 @@ export function SidePanelApp() {
         const charCount = freshEmail.bodyText ? freshEmail.bodyText.trim().length : 0;
 
         if (!freshEmail.subject?.trim()) {
-          setError('Add a subject to your email before using MailPilot.');
+          setError(t.errors.addSubject);
           setIsLoading(false);
           return;
         }
 
         if (!freshEmail.bodyText?.trim()) {
-          setError('Your email body is empty. Write your email first, then click Rewrite.');
+          setError(t.errors.emptyBody);
           setIsLoading(false);
           return;
         }
 
         if (charCount < 30) {
-          setError('Email is too short. Please write at least 30 characters.');
+          setError(t.errors.tooShort);
           setIsLoading(false);
           return;
         }
 
+        // Check for suspicious patterns
+        const combinedText = `${freshEmail.subject} ${freshEmail.bodyText}`;
+        const suspiciousWarning = detectSuspiciousPatterns(combinedText);
+        
+        if (suspiciousWarning) {
+          setWarning(`${t.warnings.suspiciousPrefix}${suspiciousWarning}${t.warnings.suspiciousSuffix}`);
+          console.warn('Suspicious pattern detected:', suspiciousWarning);
+        }
+
         console.log('Rewriting with tone:', tone);
         if (translate) {
-          console.log('Translation to:', toLanguage);
+          console.log('Translation from:', fromLanguage, 'to:', toLanguage);
         }
 
         // Send rewrite request with fresh email data
@@ -358,7 +434,7 @@ export function SidePanelApp() {
           type: 'REWRITE_EMAIL',
           email: freshEmail,
           tone,
-          translate: translate ? { to: toLanguage } : undefined,
+          translate: translate ? { from: fromLanguage !== 'Auto-detect' ? fromLanguage : undefined, to: toLanguage } : undefined,
         });
       });
     });
@@ -406,6 +482,20 @@ export function SidePanelApp() {
     'Polish',
     'Turkish',
     'Tamil',
+    'Vietnamese',
+    'Thai',
+    'Indonesian',
+    'Greek',
+    'Swedish',
+    'Norwegian',
+    'Danish',
+    'Finnish',
+    'Czech',
+    'Hungarian',
+    'Romanian',
+    'Ukrainian',
+    'Hebrew',
+    'Malay',
   ];
 
   return (
@@ -418,18 +508,43 @@ export function SidePanelApp() {
         </h2>
 
         <hr className="border-t border-gray-300 w-full mx-auto mb-8" /> */}
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          {/* Interface Language Selector */}
+          <select
+            className={`px-2 py-1 border border-[#d0d0d0] rounded-md text-xs ${isLightMode ? 'bg-white text-[#1a1a1a]' : 'bg-[#1a1a1a] text-white'} cursor-pointer appearance-none hover:border-[#a0a0a0] focus:outline-none focus:border-[#1a73e8]`}
+            value={uiLanguage}
+            onChange={(e) => setUILanguage(e.target.value as UILanguage)}
+            title={t.interfaceLanguage}
+          >
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="zh">中文</option>
+            <option value="ja">日本語</option>
+            <option value="pt">Português</option>
+            <option value="it">Italiano</option>
+            <option value="ru">Русский</option>
+            <option value="ar">العربية</option>
+            <option value="hi">हिन्दी</option>
+            <option value="ta">தமிழ்</option>
+            <option value="te">తెలుగు</option>
+            <option value="ml">മലയാളം</option>
+            <option value="kn">ಕನ್ನಡ</option>
+            <option value="bn">বাংলা</option>
+          </select>
+          
           <button className="" onClick={toggleLightMode}>
             {isLightMode ? (
-              <img src="icons/moon.svg" alt="Dark Mode" className="mt-[2rem] w-9 h-9 hover:opacity-80" />
+              <img src="icons/moon.svg" alt={t.darkMode} className="w-9 h-9 hover:opacity-80" />
             ) : (
-              <img src="icons/sun.svg" alt="Light Mode" className="mt-[2rem] w-9 h-9 hover:opacity-80" />
+              <img src="icons/sun.svg" alt={t.lightMode} className="w-9 h-9 hover:opacity-80" />
             )}
           </button>
         </div>
         
 
-        <h1 className="text-xl font-semibold mt-[-2rem] mb-6">Select your tone</h1>
+        <h1 className="text-xl font-semibold mt-4 mb-6">{t.selectTone}</h1>
 
         <div className="flex items-center gap-3 mb-6 flex-wrap">
           <div className="flex-1 min-w-[120px]">
@@ -443,10 +558,10 @@ export function SidePanelApp() {
                 backgroundPosition: 'right 12px center',
               }}
             >
-              <option value="Formal">Formal</option>
-              <option value="Casual">Casual</option>
-              <option value="Professional">Professional</option>
-              <option value="Friendly">Friendly</option>
+              <option value="Formal">{t.tone.formal}</option>
+              <option value="Casual">{t.tone.casual}</option>
+              <option value="Professional">{t.tone.professional}</option>
+              <option value="Friendly">{t.tone.friendly}</option>
             </select>
           </div>
 
@@ -459,31 +574,54 @@ export function SidePanelApp() {
                 onChange={(e) => setTranslate(e.target.checked)}
                 className="w-4 h-4 text-[#1a73e8] border-[#d0d0d0] rounded focus:ring-2 focus:ring-[#1a73e8]/10 cursor-pointer"
               />
-              <span className="text-sm font-medium">Translate</span>
+              <span className="text-sm font-medium">{t.translate}</span>
             </label>
           </div>
         </div>
 
         {/* Translation language selector - shown when translate is checked */}
         {translate && (
-          <div className="mb-6">
-            <label className="block text-xs text-[#666] mb-1">Translate to</label>
-            <select
-              className={`w-full px-3 py-2.5 border border-[#d0d0d0] rounded-md text-sm ${isLightMode ? 'bg-white text-[#1a1a1a]' : 'bg-[#1a1a1a] text-white'} cursor-pointer appearance-none hover:border-[#a0a0a0] focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/10 pr-9`}
-              value={toLanguage}
-              onChange={(e) => setToLanguage(e.target.value)}
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5l3 3 3-3' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'right 12px center',
-              }}
-            >
-              {languages.map((lang) => (
-                <option key={lang} value={lang}>
-                  {lang}
-                </option>
-              ))}
-            </select>
+          <div className="mb-6 space-y-4">
+            <div>
+              <label className="block text-xs text-[#666] mb-1">{t.translateFrom}</label>
+              <select
+                className={`w-full px-3 py-2.5 border border-[#d0d0d0] rounded-md text-sm ${isLightMode ? 'bg-white text-[#1a1a1a]' : 'bg-[#1a1a1a] text-white'} cursor-pointer appearance-none hover:border-[#a0a0a0] focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/10 pr-9`}
+                value={fromLanguage}
+                onChange={(e) => setFromLanguage(e.target.value)}
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5l3 3 3-3' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 12px center',
+                }}
+              >
+                <option value="Auto-detect">{t.autoDetect}</option>
+                {languages.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-xs text-[#666] mb-1">{t.translateTo}</label>
+              <select
+                className={`w-full px-3 py-2.5 border border-[#d0d0d0] rounded-md text-sm ${isLightMode ? 'bg-white text-[#1a1a1a]' : 'bg-[#1a1a1a] text-white'} cursor-pointer appearance-none hover:border-[#a0a0a0] focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/10 pr-9`}
+                value={toLanguage}
+                onChange={(e) => setToLanguage(e.target.value)}
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5l3 3 3-3' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 12px center',
+                }}
+              >
+                {languages.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         )}
 
@@ -527,7 +665,7 @@ export function SidePanelApp() {
             
             {/* Button content */}
             <span className="relative z-10 flex items-center gap-2">
-              {isLoading ? 'Rewriting...' : isCooldown ? 'Cooldown...' : 'Rewrite'}
+              {isLoading ? t.rewriting : isCooldown ? t.cooldown : t.rewriteButton}
               {!isLoading && !isCooldown && (
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                   <path
@@ -553,14 +691,22 @@ export function SidePanelApp() {
           </div>
         )}
 
+        {/* Warning Message */}
+        {warning && (
+          <div className="flex rounded-md mb-4 overflow-hidden">
+            <div className="w-1 bg-[#ff9800] flex-shrink-0"></div>
+            <div className="flex-1 p-4 text-sm leading-relaxed bg-[#fff4e6] text-[#5f3700]">
+              {warning}
+            </div>
+          </div>
+        )}
+
         {/* Too Short Error */}
         {isTooShort && (
           <div className="flex rounded-md mb-4 overflow-hidden">
             <div className="w-1 bg-[#ff9800] flex-shrink-0"></div>
             <div className="flex-1 p-4 text-sm leading-relaxed bg-[#fff4e6] text-[#5f3700]">
-              Your email is currently too short. Please go back to your email and write{' '}
-              <span className="font-bold">at least 30 characters</span>. You have {charCount} characters right
-              now.
+              {t.errors.tooShortDetail(charCount)}
             </div>
           </div>
         )}
@@ -570,10 +716,10 @@ export function SidePanelApp() {
         {/* Rewritten Email Display */}
         {rewritten && (
           <div className={`mt-4 p-4 border border-[#d0d0d0] rounded-md ${isLightMode ? 'bg-white text-[#1a1a1a]' : 'bg-[#1a1a1a] text-white'} box-shadow-lg`}>
-            <h2 className="text-lg font-semibold mb-4">Rewritten Email</h2>
+            <h2 className="text-lg font-semibold mb-4">{t.rewrittenEmail}</h2>
             
             <div className="mb-4">
-              <label className="block text-xs font-medium mb-1">Subject</label>
+              <label className="block text-xs font-medium mb-1">{t.subject}</label>
               <div className="px-3 py-2 border border-[#d0d0d0] rounded-md text-sm">
                 {typedSubject}
                 {isTyping && typedSubject.length < rewritten.subject.length && (
@@ -583,7 +729,7 @@ export function SidePanelApp() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-xs font-medium mb-1">Body</label>
+              <label className="block text-xs font-medium mb-1">{t.body}</label>
               <div className="px-3 py-2 border border-[#d0d0d0] rounded-md text-sm whitespace-pre-wrap">
                 {typedBody}
                 {isTyping && typedBody.length < rewritten.body.length && (
@@ -597,7 +743,7 @@ export function SidePanelApp() {
               onClick={handleApply}
               disabled={isTyping}
             >
-              {isTyping ? 'Typing...' : 'Apply to Email'}
+              {isTyping ? t.typing : t.applyToEmail}
             </button>
           </div>
         )}
