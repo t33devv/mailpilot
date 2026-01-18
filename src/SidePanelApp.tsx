@@ -317,6 +317,10 @@ export function SidePanelApp() {
     setIsLightMode((prev) => !prev);
   }
 
+  // Constants for jailbreak detection
+  const MAX_CAPS_WORDS_THRESHOLD = 8;
+  const URL_PATTERNS = ['@', '://', '.com', '.org', '.net'];
+
   // Function to detect suspicious patterns that might be jailbreak attempts
   const detectSuspiciousPatterns = (text: string): string | null => {
     const suspiciousPatterns = [
@@ -349,13 +353,12 @@ export function SidePanelApp() {
     const words = text.split(/\s+/);
     const capsWords = words.filter(word => {
       // Skip words that are likely acronyms (3 chars or less) or URLs/emails
-      if (word.length <= 3 || word.includes('@') || word.includes('://') || word.includes('.com')) {
-        return false;
-      }
+      if (word.length <= 3) return false;
+      if (URL_PATTERNS.some(pattern => word.includes(pattern))) return false;
       return word === word.toUpperCase() && /^[A-Z]+$/.test(word);
     });
     
-    if (capsWords.length > 8) {
+    if (capsWords.length > MAX_CAPS_WORDS_THRESHOLD) {
       return 'Contains excessive capitalization that may attempt to manipulate AI';
     }
     
@@ -528,9 +531,9 @@ export function SidePanelApp() {
           
           <button className="" onClick={toggleLightMode}>
             {isLightMode ? (
-              <img src="icons/moon.svg" alt="Dark Mode" className="w-9 h-9 hover:opacity-80" />
+              <img src="icons/moon.svg" alt={t.darkMode} className="w-9 h-9 hover:opacity-80" />
             ) : (
-              <img src="icons/sun.svg" alt="Light Mode" className="w-9 h-9 hover:opacity-80" />
+              <img src="icons/sun.svg" alt={t.lightMode} className="w-9 h-9 hover:opacity-80" />
             )}
           </button>
         </div>

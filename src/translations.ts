@@ -22,6 +22,8 @@ export interface Translations {
   subject: string;
   body: string;
   interfaceLanguage: string;
+  darkMode: string;
+  lightMode: string;
   errors: {
     noActiveTab: string;
     couldNotRetrieve: string;
@@ -58,6 +60,8 @@ export const translations: Record<UILanguage, Translations> = {
     subject: 'Subject',
     body: 'Body',
     interfaceLanguage: 'Interface Language',
+    darkMode: 'Dark Mode',
+    lightMode: 'Light Mode',
     errors: {
       noActiveTab: 'No active Gmail tab found for this panel.',
       couldNotRetrieve: 'Could not retrieve email data',
@@ -92,6 +96,8 @@ export const translations: Record<UILanguage, Translations> = {
     subject: 'Asunto',
     body: 'Cuerpo',
     interfaceLanguage: 'Idioma de interfaz',
+    darkMode: 'Modo oscuro',
+    lightMode: 'Modo claro',
     errors: {
       noActiveTab: 'No se encontró ninguna pestaña activa de Gmail para este panel.',
       couldNotRetrieve: 'No se pudieron recuperar los datos del correo',
@@ -126,6 +132,8 @@ export const translations: Record<UILanguage, Translations> = {
     subject: 'Objet',
     body: 'Corps',
     interfaceLanguage: 'Langue de l\'interface',
+    darkMode: 'Mode sombre',
+    lightMode: 'Mode clair',
     errors: {
       noActiveTab: 'Aucun onglet Gmail actif trouvé pour ce panneau.',
       couldNotRetrieve: 'Impossible de récupérer les données de l\'email',
@@ -160,6 +168,8 @@ export const translations: Record<UILanguage, Translations> = {
     subject: 'Betreff',
     body: 'Text',
     interfaceLanguage: 'Oberflächensprache',
+    darkMode: 'Dunkelmodus',
+    lightMode: 'Hellmodus',
     errors: {
       noActiveTab: 'Kein aktiver Gmail-Tab für dieses Panel gefunden.',
       couldNotRetrieve: 'E-Mail-Daten konnten nicht abgerufen werden',
@@ -194,6 +204,8 @@ export const translations: Record<UILanguage, Translations> = {
     subject: '主题',
     body: '正文',
     interfaceLanguage: '界面语言',
+    darkMode: '暗色模式',
+    lightMode: '亮色模式',
     errors: {
       noActiveTab: '未找到此面板的活动Gmail标签页。',
       couldNotRetrieve: '无法检索邮件数据',
@@ -228,6 +240,8 @@ export const translations: Record<UILanguage, Translations> = {
     subject: '件名',
     body: '本文',
     interfaceLanguage: 'インターフェース言語',
+    darkMode: 'ダークモード',
+    lightMode: 'ライトモード',
     errors: {
       noActiveTab: 'このパネルのアクティブなGmailタブが見つかりません。',
       couldNotRetrieve: 'メールデータを取得できませんでした',
@@ -262,6 +276,8 @@ export const translations: Record<UILanguage, Translations> = {
     subject: 'Assunto',
     body: 'Corpo',
     interfaceLanguage: 'Idioma da interface',
+    darkMode: 'Modo escuro',
+    lightMode: 'Modo claro',
     errors: {
       noActiveTab: 'Nenhuma aba do Gmail ativa encontrada para este painel.',
       couldNotRetrieve: 'Não foi possível recuperar os dados do e-mail',
@@ -296,6 +312,8 @@ export const translations: Record<UILanguage, Translations> = {
     subject: 'Oggetto',
     body: 'Corpo',
     interfaceLanguage: 'Lingua dell\'interfaccia',
+    darkMode: 'Modalità scura',
+    lightMode: 'Modalità chiara',
     errors: {
       noActiveTab: 'Nessuna scheda Gmail attiva trovata per questo pannello.',
       couldNotRetrieve: 'Impossibile recuperare i dati dell\'email',
@@ -330,6 +348,8 @@ export const translations: Record<UILanguage, Translations> = {
     subject: 'Тема',
     body: 'Текст',
     interfaceLanguage: 'Язык интерфейса',
+    darkMode: 'Темный режим',
+    lightMode: 'Светлый режим',
     errors: {
       noActiveTab: 'Не найдено активной вкладки Gmail для этой панели.',
       couldNotRetrieve: 'Не удалось получить данные письма',
@@ -364,6 +384,8 @@ export const translations: Record<UILanguage, Translations> = {
     subject: 'الموضوع',
     body: 'النص',
     interfaceLanguage: 'لغة الواجهة',
+    darkMode: 'الوضع الداكن',
+    lightMode: 'الوضع الفاتح',
     errors: {
       noActiveTab: 'لم يتم العثور على علامة تبويب Gmail نشطة لهذه اللوحة.',
       couldNotRetrieve: 'تعذر استرداد بيانات البريد الإلكتروني',
@@ -398,6 +420,8 @@ export const translations: Record<UILanguage, Translations> = {
     subject: 'विषय',
     body: 'मुख्य भाग',
     interfaceLanguage: 'इंटरफ़ेस भाषा',
+    darkMode: 'डार्क मोड',
+    lightMode: 'लाइट मोड',
     errors: {
       noActiveTab: 'इस पैनल के लिए कोई सक्रिय Gmail टैब नहीं मिला।',
       couldNotRetrieve: 'ईमेल डेटा पुनर्प्राप्त नहीं किया जा सका',
