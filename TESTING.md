@@ -119,7 +119,7 @@ Verify each language is properly passed to the backend API.
   - "act as"
   - "this is not an email"
   - "do not rewrite"
-  - Excessive capitalization (5+ all-caps words)
+  - Excessive capitalization (8+ all-caps words)
 
 ## Suspicious Patterns Detected
 
