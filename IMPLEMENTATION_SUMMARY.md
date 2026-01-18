@@ -71,7 +71,7 @@ This PR successfully implements all requirements from the GitHub issue:
    - Added "from language" selector for translation
 
 2. **src/translations.ts** (NEW - 438 lines)
-   - Complete translation strings for 11 languages
+   - Complete translation strings for 16 languages
    - Type-safe translation interface
    - Helper function for language retrieval
 
