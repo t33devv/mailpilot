@@ -119,7 +119,7 @@ This PR successfully implements all requirements from the GitHub issue:
 ## Testing
 
 ### Manual Testing Recommended
-1. Test interface language switching between all 11 languages
+1. Test interface language switching between all 16 languages
 2. Test translation with auto-detect and manual language selection
 3. Test jailbreak detection with suspicious patterns
 4. Verify language preferences persist across sessions
