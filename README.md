@@ -91,10 +91,6 @@ MailPilot includes built-in protection against prompt injection and jailbreak at
 
 
 
-2. In Chrome, go to `chrome://extensions/` and click the refresh icon on the MailPilot extension card
-
-3. Test your changes in Gmail or Outlook
-
 ## Daily Limit
 
 The daily limit is 50 rewrites per day, which should be plenty for most users.
