@@ -10,8 +10,4 @@
 | < 4.0   | :x:                |
 
 ## Reporting a Vulnerability
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
-
-*this section can be edited only by the original creator since i dont have access to this info*
+Contact Info: (DEMO EMAIL aka TOBIAS EMAIL, OR EXTENSION Email)
