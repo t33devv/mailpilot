@@ -520,6 +520,7 @@ export function SidePanelApp() {
             <option value="es">Español</option>
             <option value="fr">Français</option>
             <option value="de">Deutsch</option>
+            <option value="gr">Ελληνικά</option>
             <option value="zh">中文</option>
             <option value="ja">日本語</option>
             <option value="pt">Português</option>

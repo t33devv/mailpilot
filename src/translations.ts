@@ -1,5 +1,5 @@
 // Translation strings for MailPilot UI
-export type UILanguage = 'en' | 'es' | 'fr' | 'de' | 'zh' | 'ja' | 'pt' | 'it' | 'ru' | 'ar' | 'hi' | 'ta' | 'te' | 'ml' | 'kn' | 'bn';
+export type UILanguage = 'en' | 'es' | 'fr' | 'de' | 'zh' | 'ja' | 'pt' | 'it' | 'ru' | 'ar' | 'hi' | 'ta' | 'te' | 'ml' | 'kn' | 'bn' | 'gr';
 
 export interface Translations {
   selectTone: string;
@@ -613,6 +613,42 @@ export const translations: Record<UILanguage, Translations> = {
     warnings: {
       suspiciousPrefix: '⚠️ সতর্কতা: আপনার ইমেল ',
       suspiciousSuffix: '। AI এখনও এটিকে একটি পেশাদার ইমেল হিসাবে পুনরায় লেখার চেষ্টা করবে, তবে ফলাফল ভিন্ন হতে পারে।',
+    },
+  },
+  gr: {
+    selectTone: 'Διαλέξτε τον τόνο σας',
+    tone: {
+      formal: 'Επίσημος',
+      casual: 'Γενικός',
+      professional: 'Επαγγελματικός',
+      friendly: 'Φιλικός',
+    },
+    translate: 'Μετάφραση',
+    translateFrom: 'Μετάφραση από',
+    translateTo: 'Μετάφραση σε',
+    autoDetect: 'Αυτόματη ανίχνευση',
+    rewriteButton: 'Ξαναγράψε',
+    rewriting: 'Ξαναγράφεται...',
+    cooldown: 'Αναμονή...',
+    applyToEmail: 'Εφαρμογή στο Email',
+    typing: 'Πληκτρολόγηση...',
+    rewrittenEmail: 'Επαναγραμμένο Email',
+    subject: 'Θέμα',
+    body: 'Σώμα',
+    interfaceLanguage: 'Γλώσσα μενού',
+    darkMode: 'Σκοτεινή λειτουργία',
+    lightMode: 'Φωτεινή λειτουργία',
+    errors: {
+      noActiveTab: 'Καμία ενεργή καρτέλα Gmail δεν βρέθηκε για αυτό το πάνελ.',
+      couldNotRetrieve: 'Δεν ήταν δυνατή η απόκτηση δεδομένων από το email',
+      addSubject: 'Εισαγετε ένα θέμα στο email σας πριν χρησιμοποιήσετε το MailPilot.',
+      emptyBody: 'Το σώμα του email σας είναι κενό. Γράψτε πρώτα το email και μετά κάντε κλικ στο "Ξαναγράψε".',
+      tooShort: 'Το email είναι πολύ σύντομο. Παρακαλώ γράψτε τουλάχιστον 30 χαρακτήρες.',
+      tooShortDetail: (count) => `Το email είναι πολύ σύντομο. Παρακαλώ γράψτε τουλάχιστον 30 χαρακτήρες. Έχετε ${count} χαρακτήρες αυτή τη στιγμή.`,
+    },
+    warnings: {
+      suspiciousPrefix: '⚠️ Προειδοποίηση: Το email σας ',
+      suspiciousSuffix: '. Το AI θα προσπαθήσει να το ξαναγράψει ως επαγγελματικό email, αλλά τα αποτελέσματα μπορεί να διαφέρουν.',
     },
   },
 };

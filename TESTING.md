@@ -8,7 +8,7 @@
 - **Bidirectional Translation**: Full support for translating between any language pair
 
 ### 2. Interface Language Selector
-- **16 Languages Available**: English, Spanish, French, German, Chinese, Japanese, Portuguese, Italian, Russian, Arabic, Hindi, Tamil, Telugu, Malayalam, Kannada, Bengali
+- **16 Languages Available**: English, Spanish, French, German, Greek, Chinese, Japanese, Portuguese, Italian, Russian, Arabic, Hindi, Tamil, Telugu, Malayalam, Kannada, Bengali
 - **Persistent Preference**: Selected language is saved and persists across sessions
 - **Complete Localization**: All UI text, buttons, labels, errors, and warnings are translated
 
